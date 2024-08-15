@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { airdropIfRequired, getKeypairFromEnvironment } from "@solana-developers/helpers";
 import { Connection, PublicKey, SystemProgram, Transaction, clusterApiUrl, sendAndConfirmTransaction } from "@solana/web3.js";
+import { createMemoInstruction } from "@solana/spl-memo";
 
 const sender = getKeypairFromEnvironment("SECRET_KEY");
 const connection = new Connection(clusterApiUrl("devnet"));
@@ -20,8 +21,10 @@ const sendInstruction = SystemProgram.transfer({
     toPubkey: address,
     lamports: lamports,
 });
-
 transaction.add(sendInstruction);
+
+const memoInstruction = createMemoInstruction('Hello from Mateusz!');
+transaction.add(memoInstruction);
 
 const signature = await sendAndConfirmTransaction(connection, transaction, [sender]);
 
